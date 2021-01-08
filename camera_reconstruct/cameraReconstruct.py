@@ -16,6 +16,7 @@ class cameraReconstructor(object):
       
     def reconstruct(self, pixX, pixY):
         cameraIntrinsics = self.cameraIntrinsics
+        inputDepth = 1.0
         camX = (pixX-cameraIntrinsics[0,2])*inputDepth/cameraIntrinsics[0,0]
         camY = (pixY-cameraIntrinsics[1,2])*inputDepth/cameraIntrinsics[1,1]
         camZ = 0.0

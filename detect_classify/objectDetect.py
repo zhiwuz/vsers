@@ -1,4 +1,4 @@
-import rosbag
+import ros2bag as rosbag
 import yaml
 import cv2 as cv
 from cv_bridge import CvBridge
