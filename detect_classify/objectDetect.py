@@ -1,11 +1,9 @@
-import ros2bag as rosbag
 import yaml
 import cv2 as cv
-from cv_bridge import CvBridge
 import imutils
 import numpy as np
 import matplotlib.pyplot as plt
-from object_vision_sensing.camera_reconstruct.cameraReconstruct import cameraReconstructor
+from camera_reconstruct.cameraReconstruct import cameraReconstructor
 
 
 class objectDetector(object):
@@ -22,35 +20,6 @@ class objectDetector(object):
     def setReconstructor(self, cameraIntrinsics = None, rotation = None, transition = None):
         self.reconstructor.reset(cameraIntrinsics=cameraIntrinsics, rotation=rotation, transition=transition)
     
-    # extract image from rosbag
-    def imageFromBag(self, bagPath, channel, frameNum = 0):
-        bag = rosbag.Bag(bagPath, 'r')
-        count = 0
-        messages = bag.read_messages(topics=['/'+channel+'/image_raw'])
-        for topic, msg, t in messages:
-            if count >= frameNum:
-                break
-            count = count + 1
-        if msg.encoding == 'bgra8':
-            cv_img = self.bridge.imgmsg_to_cv2(msg, desired_encoding="rgb8")
-        else:
-            cv_img = self.bridge.imgmsg_to_cv2(msg, desired_encoding="passthrough")
-        
-        cv_img = self.depthConvert(cv_img, msg.encoding)
-        
-        return cv_img
-    
-    def cameraInfoFromBag(self, bagPath, channel, frameNum = 0):
-        bag = rosbag.Bag(bagPath, 'r')
-        count = 0
-        messages = bag.read_messages(topics=['/'+channel+'/camera_info'])
-        for topic, msg, t in messages:
-            if count >= frameNum:
-                break
-            count = count + 1
-        cameraIntrinsics = np.array(msg.K).reshape(3,3)
-        return cameraIntrinsics
-        
     def plotColorImage(self, colorimg):
         plt.imshow(colorimg)
     
