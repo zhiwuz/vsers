@@ -137,3 +137,8 @@ envs/envTest/examples/data/
 ._README.md
 
 .idea/*
+
+# Data files
+*.mp4
+*.MOV
+*.avi

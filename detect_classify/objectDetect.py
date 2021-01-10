@@ -7,9 +7,8 @@ from camera_reconstruct.cameraReconstruct import cameraReconstructor
 
 
 class objectDetector(object):
-    def __init__(self, maxNumObjects = 14):
+    def __init__(self, maxNumObjects = 1):
         self.maxNumObjects = maxNumObjects
-        self.bridge = CvBridge()
         self.reconstructor = cameraReconstructor()
         self.croppedRect = None
     
@@ -24,6 +23,8 @@ class objectDetector(object):
         plt.imshow(colorimg)
     
     def cropImage(self, inputImg, croppedRect):
+        if type(croppedRect) == type(None):
+            return inputImg
         assert type(croppedRect) == np.ndarray
         [x,y,dx,dy] = croppedRect.astype('int')
         img = inputImg[y:y+dy,x:x+dx]
@@ -34,7 +35,7 @@ class objectDetector(object):
         image = image.copy()
         image = image.astype('uint8')
         blurred = cv.GaussianBlur(image, (5, 5), 0)
-        thresh = cv.threshold(blurred, 0, 255, cv.THRESH_BINARY)[1]
+        thresh = cv.threshold(blurred, 0, 255, cv.THRESH_BINARY+cv.THRESH_OTSU)[1]
         cnts = cv.findContours(thresh.copy(), cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
         cnts = imutils.grab_contours(cnts)
         cnts = [cnt for cnt in cnts if cv.contourArea(cnt)>5.0]
@@ -49,14 +50,14 @@ class objectDetector(object):
             cy = int(M['m01']/M['m00'])
             centroids[cntId,0] = cx
             centroids[cntId,1] = cy
-        return centroids, cnts       
+        return centroids, cnts  
     
     def detectionPlot(self, image, centroids, plot = True):
         image = image.copy()
         if len(image.shape) == 2:
             image = cv.cvtColor(image, cv.COLOR_GRAY2RGB)
         for centroid in centroids:
-            cv.circle(image, tuple(centroid.astype('int')), 4, (1.0, 0.0, 0.0), -1);
+            cv.circle(image, tuple(centroid.astype('int')), 5, (1.0, 0.0, 0.0), -1);
         if plot:
             plt.imshow(image)
         return image
@@ -66,9 +67,9 @@ class objectDetector(object):
         croppedRect = self.croppedRect
         maxNumObjects = self.maxNumObjects
         croppedInputColor = self.cropImage(inputColor, croppedRect) 
-        centroids,_ = self.centroidDetection(croppedInputColor, maxNumObjects)
+        centroids, _ = self.centroidDetection(croppedInputColor, maxNumObjects)
         image = self.detectionPlot(croppedInputColor, centroids, plot)
-        coordinates = np.concatenate((centroids), axis = 1)
+        coordinates = centroids
         coordinates = self.reconstructor.reconstruct(croppedRect[0] + coordinates[:,0], croppedRect[1] + coordinates[:,1])
         return coordinates, centroids, croppedInputColor, image
     

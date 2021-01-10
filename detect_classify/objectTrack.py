@@ -1,4 +1,3 @@
-from object_vision_sensing.detect_classify.objectClassify import objectDetectClassifier
 from sklearn.neighbors import NearestNeighbors
 import cv2 as cv
 import matplotlib.pyplot as plt
@@ -50,7 +49,7 @@ class objectDetectTracker(object):
             plt.imshow(image)
         return image
 
-    def detect(self, inputColor, inputDepth, plot = True):
+    def detect(self, inputColor, plot = True):
         coordinates, centroids, croppedInputColor, _ = self.detector.detect(inputColor, plot = False)
         IDs = self.tracker.track(coordinates)
         labels = [{'id': IDs[coordinateId]} for coordinateId in range(len(coordinates))]
