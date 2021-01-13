@@ -17,9 +17,9 @@ class objectDetector(object):
         self.croppedRect = croppedRect
 
     def set_reconstructor(self,
-                         cameraIntrinsics=None,
-                         rotation=None,
-                         transition=None):
+                          cameraIntrinsics=None,
+                          rotation=None,
+                          transition=None):
         self.reconstructor.reset(cameraIntrinsics=cameraIntrinsics,
                                  rotation=rotation,
                                  transition=transition)

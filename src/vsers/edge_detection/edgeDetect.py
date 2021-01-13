@@ -1,29 +1,30 @@
 import cv2 as cv
 import numpy as np
 import matplotlib.pyplot as plt
-from skimage import filters
 from camera_reconstruct.cameraReconstruct import cameraReconstructor
 from detect_track.objectDetect import objectDetector
 
+
 class edgeDetector(object):
+
     def __init__(self):
         self.reconstructor = cameraReconstructor()
         self.croppedRect = None
-    
+
     def set_cropped_rect(self, croppedRect):
-        self.croppedRect = croppedRect    
-    
+        self.croppedRect = croppedRect
+
     def set_reconstructor(self,
-                         cameraIntrinsics=None,
-                         rotation=None,
-                         transition=None):
+                          cameraIntrinsics=None,
+                          rotation=None,
+                          transition=None):
         self.reconstructor.reset(cameraIntrinsics=cameraIntrinsics,
                                  rotation=rotation,
                                  transition=transition)
-        
+
     def crop_image(self, inputImg, croppedRect):
         return objectDetector.crop_image(self, inputImg, croppedRect)
-    
+
     def auto_canny(self, image, sigma=0.33):
         # compute the median of the single channel pixel intensities
         v = np.median(image)
@@ -33,27 +34,25 @@ class edgeDetector(object):
         edged = cv.Canny(image, lower, upper)
         # return the edged image
         return edged
-    
-    
+
     def edge_detection(self, image):
-        image = image.copy()        
+        image = image.copy()
         if len(image.shape) == 3:
             image = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
         image = image.astype('uint8')
         edgeImage = self.auto_canny(image, sigma=0.6)
-        # edgeImage = cv.Canny(image,100,200)
         index = np.argmax(edgeImage[::-1, :], axis=0)
-        edgePoints = np.array([[x, image.shape[0] - y] for x, y in enumerate(index)])
-        
+        edgePoints = np.array(
+            [[x, image.shape[0] - y] for x, y in enumerate(index)])
+
         return edgePoints
-    
+
     def detection_plot(self, image, edgePoints, plot=True):
         image = image.copy()
         if len(image.shape) == 2:
             image = cv.cvtColor(image, cv.COLOR_GRAY2RGB)
         for edgePoint in edgePoints:
-            cv.circle(image, tuple(edgePoint.astype('int')), 2, (255, 0, 0),
-                      -1)
+            cv.circle(image, tuple(edgePoint.astype('int')), 2, (255, 0, 0), -1)
         if plot:
             plt.imshow(image)
         return image
@@ -69,9 +68,3 @@ class edgeDetector(object):
             croppedRect[0] + coordinates[:, 0],
             croppedRect[1] + coordinates[:, 1])
         return coordinates, edgePoints, croppedInputColor, image
-    
-    
-    
-    
-
-        

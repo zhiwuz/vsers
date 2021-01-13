@@ -28,7 +28,6 @@ def pkg_files(directory):
     return paths
 
 
-
 setup(
     name='vsers',
     version=__version__,
@@ -37,7 +36,6 @@ setup(
     license='Zlib',
     packages=packages,
     package_dir={'': 'src'},
-    },
     python_requires='>=2.7.*, <3.8',
     classifiers=[
         "Programming Language :: Python :: 2.7",

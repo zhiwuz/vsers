@@ -37,9 +37,9 @@ class objectDetectTracker(object):
         self.detector.set_cropped_rect(croppedRect)
 
     def set_reconstructor(self,
-                         cameraIntrinsics=None,
-                         rotation=None,
-                         transition=None):
+                          cameraIntrinsics=None,
+                          rotation=None,
+                          transition=None):
         self.detector.set_reconstructor(cameraIntrinsics, rotation, transition)
 
     def detection_plot(self, image, centroids, labels, plot=True):
