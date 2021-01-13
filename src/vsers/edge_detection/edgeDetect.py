@@ -1,8 +1,8 @@
 import cv2 as cv
 import numpy as np
 import matplotlib.pyplot as plt
-from camera_reconstruct.cameraReconstruct import cameraReconstructor
-from detect_track.objectDetect import objectDetector
+from vsers.camera_reconstruct.cameraReconstruct import cameraReconstructor
+from vsers.detect_track.objectDetect import objectDetector
 
 
 class edgeDetector(object):

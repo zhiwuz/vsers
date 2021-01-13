@@ -2,7 +2,7 @@ import cv2 as cv
 import imutils
 import numpy as np
 import matplotlib.pyplot as plt
-from camera_reconstruct.cameraReconstruct import cameraReconstructor
+from vsers.camera_reconstruct.cameraReconstruct import cameraReconstructor
 
 
 class objectDetector(object):
