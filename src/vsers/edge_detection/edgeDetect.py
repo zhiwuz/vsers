@@ -7,9 +7,10 @@ from vsers.detect_track.objectDetect import objectDetector
 
 class edgeDetector(object):
 
-    def __init__(self):
+    def __init__(self, sigma = 0.6):
         self.reconstructor = cameraReconstructor()
         self.croppedRect = None
+        self.sigma = sigma
 
     def set_cropped_rect(self, croppedRect):
         self.croppedRect = croppedRect
@@ -40,12 +41,12 @@ class edgeDetector(object):
         if len(image.shape) == 3:
             image = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
         image = image.astype('uint8')
-        edgeImage = self.auto_canny(image, sigma=0.6)
+        edgeImage = self.auto_canny(image, sigma=self.sigma)
         index = np.argmax(edgeImage[::-1, :], axis=0)
         edgePoints = np.array(
             [[x, image.shape[0] - y] for x, y in enumerate(index)])
 
-        return edgePoints
+        return edgePoints, edgeImage
 
     def detection_plot(self, image, edgePoints, plot=True):
         image = image.copy()
@@ -61,10 +62,10 @@ class edgeDetector(object):
     def detect(self, inputColor, plot=True):
         croppedRect = self.croppedRect
         croppedInputColor = self.crop_image(inputColor, croppedRect)
-        edgePoints = self.edge_detection(croppedInputColor)
+        edgePoints, edgeImage = self.edge_detection(croppedInputColor)
         image = self.detection_plot(croppedInputColor, edgePoints, plot)
         coordinates = edgePoints
         coordinates = self.reconstructor.reconstruct(
             croppedRect[0] + coordinates[:, 0],
             croppedRect[1] + coordinates[:, 1])
-        return coordinates, edgePoints, croppedInputColor, image
+        return coordinates, edgePoints, croppedInputColor, image, edgeImage
