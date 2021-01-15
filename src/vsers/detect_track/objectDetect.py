@@ -27,7 +27,8 @@ class objectDetector(object):
     def plot_color_image(self, colorimg):
         plt.imshow(colorimg)
 
-    def crop_image(self, inputImg, croppedRect):
+    @staticmethod
+    def crop_image(inputImg, croppedRect):
         if isinstance(croppedRect, type(None)):
             return inputImg
         assert type(croppedRect) == np.ndarray

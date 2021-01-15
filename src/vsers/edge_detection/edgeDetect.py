@@ -22,9 +22,9 @@ class edgeDetector(object):
         self.reconstructor.reset(cameraIntrinsics=cameraIntrinsics,
                                  rotation=rotation,
                                  transition=transition)
-
-    def crop_image(self, inputImg, croppedRect):
-        return objectDetector.crop_image(self, inputImg, croppedRect)
+    @staticmethod
+    def crop_image(inputImg, croppedRect):
+        return objectDetector.crop_image(inputImg, croppedRect)
 
     def auto_canny(self, image, sigma=0.33):
         # compute the median of the single channel pixel intensities
