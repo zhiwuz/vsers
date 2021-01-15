@@ -36,7 +36,7 @@ setup(
     license='Zlib',
     packages=packages,
     package_dir={'': 'src'},
-    python_requires='>=2.7.*, <=3.9.*',
+    python_requires='>=2.7.*, <=3.9.1',
     classifiers=[
         "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3.7",
