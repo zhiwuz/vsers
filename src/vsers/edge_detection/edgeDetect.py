@@ -44,7 +44,7 @@ class edgeDetector(object):
         edgeImage = self.auto_canny(image, sigma=self.sigma)
         index = np.argmax(edgeImage[::-1, :], axis=0)
         edgePoints = np.array(
-            [[x, image.shape[0] - y] for x, y in enumerate(index)])
+            [[x, image.shape[0] - 1 - y] for x, y in enumerate(index) if edgeImage[image.shape[0] - 1 - y, x] > 0])
 
         return edgePoints, edgeImage
 
