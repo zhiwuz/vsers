@@ -39,6 +39,7 @@ setup(
     python_requires='>=2.7.*, <=3.9.1',
     classifiers=[
         "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "License :: OSI Approved :: Zlib License",
         "Topic :: Scientific/Engineering :: Artificial Intelligence",
