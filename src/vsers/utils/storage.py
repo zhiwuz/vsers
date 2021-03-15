@@ -14,5 +14,5 @@ class Pickling(object):
         self.num = self.num + 1
 
     def save(self):
-        with open(os.path.join(self.foldername, self.filename), 'wb') as pickling_file:
+        with open(os.path.join(self.foldername, self.filename), "wb") as pickling_file:
             pickle.dump(self.dic, pickling_file)

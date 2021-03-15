@@ -3,6 +3,7 @@ from scipy import interpolate
 
 class ExtrapolateFitting(object):
     def __init__(self):
+        self.order = 4
         self.fit_function = None
         self.first_derivative = None
         self.second_derivative = None
@@ -10,7 +11,7 @@ class ExtrapolateFitting(object):
         self.fourth_derivative = None
 
     def fit(self, x_axis, y_axis):
-        self.fit_function = interpolate.UnivariateSpline(x_axis, y_axis)
+        self.fit_function = interpolate.UnivariateSpline(x_axis, y_axis, k=self.order)
         return self.fit_function
 
     def get_first_derivative(self):
