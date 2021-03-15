@@ -1,7 +1,7 @@
 import numpy as np
 
 
-class cameraReconstructor(object):
+class CameraReconstructor(object):
 
     def __init__(self):
         self.cameraIntrinsics = np.identity(3)
