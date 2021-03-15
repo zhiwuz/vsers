@@ -2,14 +2,14 @@ import cv2 as cv
 import imutils
 import numpy as np
 import matplotlib.pyplot as plt
-from vsers.camera_reconstruct.cameraReconstruct import cameraReconstructor
+from vsers.camera_reconstruct.cameraReconstruct import CameraReconstructor
 
 
-class objectDetector(object):
+class ObjectDetector(object):
 
     def __init__(self, maxNumObjects=1):
         self.maxNumObjects = maxNumObjects
-        self.reconstructor = cameraReconstructor()
+        self.reconstructor = CameraReconstructor()
         self.croppedRect = None
 
     # set the region of interest for cropping

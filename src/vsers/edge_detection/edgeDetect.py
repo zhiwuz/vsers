@@ -1,14 +1,14 @@
 import cv2 as cv
 import numpy as np
 import matplotlib.pyplot as plt
-from vsers.camera_reconstruct.cameraReconstruct import cameraReconstructor
-from vsers.detect_track.objectDetect import objectDetector
+from vsers.camera_reconstruct.cameraReconstruct import CameraReconstructor
+from vsers.detect_track.objectDetect import ObjectDetector
 
 
-class edgeDetector(object):
+class EdgeDetector(object):
 
     def __init__(self, sigma = 0.6):
-        self.reconstructor = cameraReconstructor()
+        self.reconstructor = CameraReconstructor()
         self.croppedRect = None
         self.sigma = sigma
 
@@ -24,7 +24,7 @@ class edgeDetector(object):
                                  transition=transition)
     @staticmethod
     def crop_image(inputImg, croppedRect):
-        return objectDetector.crop_image(inputImg, croppedRect)
+        return ObjectDetector.crop_image(inputImg, croppedRect)
 
     def auto_canny(self, image, sigma=0.33):
         # compute the median of the single channel pixel intensities

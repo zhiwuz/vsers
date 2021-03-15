@@ -3,7 +3,7 @@ import cv2 as cv
 import matplotlib.pyplot as plt
 
 
-class nearestTracker(object):
+class NearestTracker(object):
 
     def __init__(self):
         self.frameNum = 0
@@ -27,7 +27,7 @@ class nearestTracker(object):
         return self.IDs
 
 
-class objectDetectTracker(object):
+class ObjectDetectTracker(object):
 
     def __init__(self, detector, tracker):
         self.detector = detector
