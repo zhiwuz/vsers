@@ -142,3 +142,4 @@ envs/envTest/examples/data/
 *.mp4
 *.MOV
 *.avi
+store/

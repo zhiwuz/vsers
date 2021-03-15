@@ -9,10 +9,10 @@ class Filter(object):
 
 
 class LowPassFilter(Filter):
-    def __init__(self):
+    def __init__(self, fs=10.0):
         self.filtered_y = None
         self.order = 6
-        self.fs = 30.0
+        self.fs = fs
         self.cutoff = 3.667
         self.b, self.a = self.butter_low_pass(self.cutoff, self.fs, self.order)
 
@@ -35,8 +35,8 @@ class LowPassFilter(Filter):
 
 
 class ContinuousFilter(Filter):
-    def __init__(self):
-        self.gap_threshold = 0.01
+    def __init__(self, gap_threshold=0.01):
+        self.gap_threshold = gap_threshold
 
     def filter(self, coordinates):
         filteredCoordinates = []
@@ -48,3 +48,15 @@ class ContinuousFilter(Filter):
 
         filteredCoordinates = np.array(filteredCoordinates)
         return filteredCoordinates
+
+class RangeFilter(Filter):
+    def __init__(self, minimum=None, maximum=None):
+        self.minimum = minimum
+        self.maximum = maximum
+
+    def filter(self, data):
+        if self.minimum is not None:
+            data = data[data[:, 1] > self.minimum]
+        if self.maximum is not None:
+            data = data[data[:, 1] < self.maximum]
+        return data
