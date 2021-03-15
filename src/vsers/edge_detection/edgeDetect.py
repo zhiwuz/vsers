@@ -12,7 +12,7 @@ class EdgeDetector(object):
     def __init__(self, sigma=0.6):
         self.reconstructor = CameraReconstructor()
         self.low_pass_filter = LowPassFilter()
-        self.fit = ExtrapolateFitting()
+        self.fit = None
         self.croppedRect = None
         self.sigma = sigma
 
@@ -78,5 +78,7 @@ class EdgeDetector(object):
         if filtering:
             coordinates[:, 1] = self.low_pass_filter.filter(coordinates[:, 1])
         if fitting:
-            fitFunction = self.fit.fit(coordinates[:, 0], coordinates[:, 1])
-        return coordinates, edgePoints, croppedInputColor, image, edgeImage, fitFunction
+            self.fit = ExtrapolateFitting()
+            self.fit.fit(coordinates[:, 0], coordinates[:, 1])
+            self.fit.get_derivatives()
+        return coordinates, edgePoints, croppedInputColor, image, edgeImage, self.fit
