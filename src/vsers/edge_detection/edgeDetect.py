@@ -3,12 +3,16 @@ import numpy as np
 import matplotlib.pyplot as plt
 from vsers.camera_reconstruct.cameraReconstruct import CameraReconstructor
 from vsers.detect_track.objectDetect import ObjectDetector
+from vsers.edge_detection.filters import LowPassFilter
+from vsers.edge_detection.fitting import ExtrapolateFitting
 
 
 class EdgeDetector(object):
 
-    def __init__(self, sigma = 0.6):
+    def __init__(self, sigma=0.6):
         self.reconstructor = CameraReconstructor()
+        self.low_pass_filter = LowPassFilter()
+        self.fit = ExtrapolateFitting()
         self.croppedRect = None
         self.sigma = sigma
 
@@ -22,6 +26,7 @@ class EdgeDetector(object):
         self.reconstructor.reset(cameraIntrinsics=cameraIntrinsics,
                                  rotation=rotation,
                                  transition=transition)
+
     @staticmethod
     def crop_image(inputImg, croppedRect):
         return ObjectDetector.crop_image(inputImg, croppedRect)
@@ -59,7 +64,9 @@ class EdgeDetector(object):
         return image
 
         # the main method for edge detection
-    def detect(self, inputColor, plot=True):
+
+    def detect(self, inputColor, plot=True, filtering=False, fitting=False):
+        fitFunction = None
         croppedRect = self.croppedRect
         croppedInputColor = self.crop_image(inputColor, croppedRect)
         edgePoints, edgeImage = self.edge_detection(croppedInputColor)
@@ -68,4 +75,8 @@ class EdgeDetector(object):
         coordinates = self.reconstructor.reconstruct(
             croppedRect[0] + coordinates[:, 0],
             croppedRect[1] + coordinates[:, 1])
-        return coordinates, edgePoints, croppedInputColor, image, edgeImage
+        if filtering:
+            coordinates[:, 1] = self.low_pass_filter.filter(coordinates[:, 1])
+        if fitting:
+            fitFunction = self.fit.fit(coordinates[:, 0], coordinates[:, 1])
+        return coordinates, edgePoints, croppedInputColor, image, edgeImage, fitFunction
