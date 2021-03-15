@@ -10,6 +10,7 @@ class Filter(object):
 
 class LowPassFilter(Filter):
     def __init__(self):
+        self.filtered_y = None
         self.order = 6
         self.fs = 30.0
         self.cutoff = 3.667
@@ -22,8 +23,9 @@ class LowPassFilter(Filter):
         return b, a
 
     def filter(self, data):
-        y = lfilter(self.b, self.a, data)
-        return y
+        filtered_y = lfilter(self.b, self.a, data)
+        self.filtered_y = filtered_y
+        return filtered_y
 
     def plot_frequency_response(self):
         w, h = freqz(self.b, self.a, worN=8000)

@@ -10,7 +10,7 @@ class ExtrapolateFitting(object):
         self.fourth_derivative = None
 
     def fit(self, x_axis, y_axis):
-        self.fit_function = interpolate.interp1d(x_axis, y_axis, fill_value="extrapolate")
+        self.fit_function = interpolate.UnivariateSpline(x_axis, y_axis)
         return self.fit_function
 
     def get_first_derivative(self):
