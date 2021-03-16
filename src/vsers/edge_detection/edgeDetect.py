@@ -1,4 +1,5 @@
 import cv2 as cv
+import skimage.filters
 import numpy as np
 import matplotlib.pyplot as plt
 from vsers.camera_reconstruct.cameraReconstruct import CameraReconstructor
@@ -42,12 +43,19 @@ class EdgeDetector(object):
         # return the edged image
         return edged
 
-    def edge_detection(self, image):
+    def edge_detection(self, image, method="canny"):
         image = image.copy()
         if len(image.shape) == 3:
             image = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
         image = image.astype('uint8')
-        edgeImage = self.auto_canny(image, sigma=self.sigma)
+        if method == "canny":
+            edgeImage = self.auto_canny(image, sigma=self.sigma)
+        elif method == "sobel":
+            edgeImage = skimage.filters.sobel(image)
+        elif method == "roberts":
+            edgeImage = skimage.filters.roberts(image)
+        else:
+            raise NotImplementedError("Edging method not implemented")
         index = np.argmax(edgeImage[::-1, :], axis=0)
         edgePoints = np.array(
             [[x, image.shape[0] - 1 - y] for x, y in enumerate(index) if edgeImage[image.shape[0] - 1 - y, x] > 0])
@@ -66,10 +74,10 @@ class EdgeDetector(object):
 
         # the main method for edge detection
 
-    def detect(self, inputColor, plot=True, filtering=False, fitting=False):
+    def detect(self, inputColor, plot=True, filtering=False, fitting=False, method="canny"):
         croppedRect = self.croppedRect
         croppedInputColor = self.crop_image(inputColor, croppedRect)
-        edgePoints, edgeImage = self.edge_detection(croppedInputColor)
+        edgePoints, edgeImage = self.edge_detection(croppedInputColor, method=method)
         image = self.detection_plot(croppedInputColor, edgePoints, plot)
         coordinates = edgePoints
         coordinates = self.reconstructor.reconstruct(
