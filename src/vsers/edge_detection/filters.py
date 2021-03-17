@@ -9,11 +9,11 @@ class Filter(object):
 
 
 class LowPassFilter(Filter):
-    def __init__(self, fs=10.0):
+    def __init__(self, fs=10.0, cutoff=3.667):
         self.filtered_y = None
         self.order = 6
         self.fs = fs
-        self.cutoff = 3.667
+        self.cutoff = cutoff
         self.b, self.a = self.butter_low_pass(self.cutoff, self.fs, self.order)
 
     def butter_low_pass(self, cutoff, fs, order=6):
@@ -39,15 +39,16 @@ class ContinuousFilter(Filter):
         self.gap_threshold = gap_threshold
 
     def filter(self, coordinates):
-        filteredCoordinates = []
+        filtered_coordinates = []
         for i in range(coordinates.shape[0]):
             if i == 0:
-                filteredCoordinates.append([coordinates[i, 0], coordinates[i, 1], coordinates[i, 2]])
-            if abs(coordinates[i, 1] - filteredCoordinates[-1][1]) < self.gap_threshold:
-                filteredCoordinates.append([coordinates[i, 0], coordinates[i, 1], coordinates[i, 2]])
+                filtered_coordinates.append([coordinates[i, 0], coordinates[i, 1], coordinates[i, 2]])
+            if abs(coordinates[i, 1] - filtered_coordinates[-1][1]) < self.gap_threshold:
+                filtered_coordinates.append([coordinates[i, 0], coordinates[i, 1], coordinates[i, 2]])
 
-        filteredCoordinates = np.array(filteredCoordinates)
-        return filteredCoordinates
+        filtered_coordinates = np.array(filtered_coordinates)
+        return filtered_coordinates
+
 
 class RangeFilter(Filter):
     def __init__(self, minimum=None, maximum=None):
@@ -60,3 +61,21 @@ class RangeFilter(Filter):
         if self.maximum is not None:
             data = data[data[:, 1] < self.maximum]
         return data
+
+
+class DownSamplingFilter(Filter):
+    def __init__(self, fit):
+        self.down_factor = 200.0
+        self.fit = fit
+
+    def filter(self, data):
+        x = data[:, 0]
+        y = data[:, 1]
+        fit_function = self.fit.fit_function
+        x1 = np.min(x)
+        x2 = np.max(x)
+        delta = x[1] - x[0]
+        new_delta = self.down_factor * delta
+        x_filtered = np.arange(x1, x2, new_delta)
+        y_filtered = np.array([fit_function(x) for x in x_filtered])
+        return x_filtered, y_filtered
