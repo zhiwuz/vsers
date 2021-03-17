@@ -70,7 +70,6 @@ class DownSamplingFilter(Filter):
 
     def filter(self, data):
         x = data[:, 0]
-        y = data[:, 1]
         fit_function = self.fit.fit_function
         x1 = np.min(x)
         x2 = np.max(x)
