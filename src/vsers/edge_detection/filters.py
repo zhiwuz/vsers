@@ -64,17 +64,15 @@ class RangeFilter(Filter):
 
 
 class DownSamplingFilter(Filter):
-    def __init__(self, fit):
+    def __init__(self):
         self.down_factor = 200.0
-        self.fit = fit
 
     def filter(self, data):
         x = data[:, 0]
-        fit_function = self.fit.fit_function
-        x1 = np.min(x)
-        x2 = np.max(x)
-        delta = x[1] - x[0]
-        new_delta = self.down_factor * delta
-        x_filtered = np.arange(x1, x2, new_delta)
-        y_filtered = np.array([fit_function(x) for x in x_filtered])
-        return x_filtered, y_filtered
+        y = data[:, 1]
+        z = data[:, 2]
+        down_factor = int(self.down_factor)
+        x_filtered = x[::down_factor]
+        y_filtered = y[::down_factor]
+        z_filtered = z[::down_factor]
+        return x_filtered, y_filtered, z_filtered
