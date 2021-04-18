@@ -15,6 +15,7 @@ class EdgeDetector(object):
         self.down_sampling_filter = None
         self.range_filter = RangeFilter(minimum=minimum, maximum=maximum)
         self.fit = None
+        self.fit_method = fit_method
         self.croppedRect = None
         self.sigma = sigma
 
@@ -87,13 +88,8 @@ class EdgeDetector(object):
             croppedRect[1] + coordinates[:, 1])
         coordinates = self.range_filter.filter(coordinates)
         if fitting:
-            self.fit = ExtrapolateFitting()
-            self.fit.fit(coordinates[:, 0], coordinates[:, 1])
-        if filtering and fitting:
-            self.down_sampling_filter = DownSamplingFilter(self.fit)
-            x_filtered, y_filtered = self.down_sampling_filter.filter(coordinates)
-            self.fit.fit(x_filtered, y_filtered)
-        if fitting:
+            self.fit = ExtrapolateFitting(fit_method=self.fit_method)
+            self.fit.fit(x, y)
             self.fit.get_derivatives()
         return coordinates, edgePoints, croppedInputColor, image, edgeImage, self.fit
 
