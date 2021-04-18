@@ -51,8 +51,10 @@ class EdgeDetector(object):
         if method == "canny":
             edgeImage = self.auto_canny(image, sigma=self.sigma)
         elif method == "sobel":
+            image = cv.GaussianBlur(image, (15, 15), 0)
             edgeImage = skimage.filters.sobel(image)
         elif method == "roberts":
+            image = cv.GaussianBlur(image, (15, 15), 0)
             edgeImage = skimage.filters.roberts(image)
         else:
             raise NotImplementedError("Edging method not implemented")
@@ -94,3 +96,11 @@ class EdgeDetector(object):
         if fitting:
             self.fit.get_derivatives()
         return coordinates, edgePoints, croppedInputColor, image, edgeImage, self.fit
+
+    @staticmethod
+    def gray_to_black_white(img):
+        block_size = 105
+        img = cv.GaussianBlur(img, (15, 15), 0)
+        local_thresh = skimage.filters.threshold_local(img, block_size, offset=10)
+        binary_local = img > local_thresh
+        return binary_local
