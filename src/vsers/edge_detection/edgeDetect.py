@@ -4,16 +4,18 @@ import numpy as np
 import matplotlib.pyplot as plt
 from vsers.camera_reconstruct.cameraReconstruct import CameraReconstructor
 from vsers.detect_track.objectDetect import ObjectDetector
-from vsers.edge_detection.filters import RangeFilter, DownSamplingFilter
+from vsers.edge_detection.filters import RangeFilter, DownSamplingFilter, ContinuousFilter
 from vsers.edge_detection.fitting import ExtrapolateFitting
 
 
 class EdgeDetector(object):
 
-    def __init__(self, sigma=0.6, minimum=None, maximum=None, fs=10.0):
+    def __init__(self, sigma=0.6, minimum=None, maximum=None, fit_method='UnivariateSpline'):
         self.reconstructor = CameraReconstructor()
         self.down_sampling_filter = None
         self.range_filter = RangeFilter(minimum=minimum, maximum=maximum)
+        self.down_sampling_filter = DownSamplingFilter()
+        self.continuous_filter = None
         self.fit = None
         self.fit_method = fit_method
         self.croppedRect = None
@@ -77,7 +79,7 @@ class EdgeDetector(object):
 
         # the main method for edge detection
 
-    def detect(self, inputColor, plot=True, filtering=False, fitting=False, method="canny"):
+    def detect(self, inputColor, plot=True, filtering=False, continuous_filtering=False, fitting=False, method="canny"):
         croppedRect = self.croppedRect
         croppedInputColor = self.crop_image(inputColor, croppedRect)
         edgePoints, edgeImage = self.edge_detection(croppedInputColor, method=method)
@@ -87,10 +89,21 @@ class EdgeDetector(object):
             croppedRect[0] + coordinates[:, 0],
             croppedRect[1] + coordinates[:, 1])
         coordinates = self.range_filter.filter(coordinates)
+        x = coordinates[:, 0]
+        y = coordinates[:, 1]
+        if filtering:
+            x, y, z = self.down_sampling_filter.filter(coordinates)
+            coordinates = np.concatenate((x[:, np.newaxis], y[:, np.newaxis], z[:, np.newaxis]), axis=1)
+        if continuous_filtering:
+            self.continuous_filter = ContinuousFilter()
+            coordinates = self.continuous_filter.filter(coordinates)
+            x = coordinates[:, 0]
+            y = coordinates[:, 1]
         if fitting:
             self.fit = ExtrapolateFitting(fit_method=self.fit_method)
             self.fit.fit(x, y)
             self.fit.get_derivatives()
+
         return coordinates, edgePoints, croppedInputColor, image, edgeImage, self.fit
 
     @staticmethod

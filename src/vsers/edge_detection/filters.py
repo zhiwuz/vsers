@@ -35,7 +35,7 @@ class LowPassFilter(Filter):
 
 
 class ContinuousFilter(Filter):
-    def __init__(self, gap_threshold=0.01):
+    def __init__(self, gap_threshold=0.8):
         self.gap_threshold = gap_threshold
 
     def filter(self, coordinates):
